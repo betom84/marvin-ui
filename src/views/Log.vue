@@ -8,20 +8,14 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
    data: function () {
-      return {
-         logLines: [],
-         canFetchMore: true,
-         searchTerm: '',
-      };
+      return {};
    },
 
    computed: {
       log() {
-         return this.logLines
+         return this.$store.state.log.lines
             .map((line) => {
                let decoratedLine = line;
 
@@ -37,10 +31,19 @@ export default {
             })
             .join('<br/>');
       },
+
+      canFetchMore() {
+         return this.$store.state.log.canFetchMore;
+      },
    },
 
    created() {
-      this.fetchLog();
+      this.$store.dispatch('log/fetch');
+      this.$store.dispatch('log/listen');
+   },
+
+   beforeDestroy() {
+      this.$store.dispatch('log/stopListen');
    },
 
    methods: {
@@ -53,30 +56,8 @@ export default {
          let cb = event.target.getBoundingClientRect();
 
          if (lb.top < cb.bottom) {
-            this.fetchLog();
+            this.$store.dispatch('log/fetch');
          }
-      },
-
-      onSearchTermInput() {
-         this.v;
-      },
-
-      fetchLog() {
-         let offset = this.logLines.length || 0;
-
-         this.canFetchMore = false;
-         axios
-            .get(`/api/log?limit=50&offset=${offset}`)
-            .then((response) => {
-               this.logLines = [...this.logLines, ...response.data.lines.reverse()];
-
-               if (response.data.lines.length > 0) {
-                  this.canFetchMore = true;
-               }
-            })
-            .catch((err) => {
-               this.logLines = [err.String()];
-            });
       },
    },
 };

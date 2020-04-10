@@ -20,7 +20,7 @@
 -  ~~scrollbars visible and styled~~
 -  ~~autoload more lines when scrolling to the end~~
 -  ~~highlight lines based on severity~~
--  enable autoupdate (via websocket)
+-  ~~enable autoupdate (via websocket)~~
 -  highlight term
 -  filter by date, severity, term
 
@@ -39,4 +39,4 @@
 ## Refactorings
 
 -  use vuex for serverstate
--  use vuex for logs
+-  ~~use vuex for logs~~

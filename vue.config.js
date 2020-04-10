@@ -1,6 +1,11 @@
 module.exports = {
    devServer: {
-      proxy: 'http://jarvis:8080/',
+      proxy: {
+         '/api': {
+            target: 'http://jarvis:8080/',
+            ws: true,
+         },
+      },
    },
    configureWebpack: {
       devtool: 'source-map',
