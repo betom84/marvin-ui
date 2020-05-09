@@ -1,66 +1,30 @@
 <template>
    <div>
+      <input class="menu__checkbox" type="checkbox" id="menu__checkbox" />
+      <label class="menu__label" for="menu__checkbox">
+         <span />
+         <span />
+         <span />
+      </label>
+
       <nav>
          <router-link to="/">Configuration</router-link>
          <router-link to="/">Endpoints</router-link>
          <router-link to="/">Log</router-link>
-      </nav>
 
-      <span class="service">Alexa-Server <StateToggle class="state" :checked="isRunning" @change="toggleState" /></span>
+         <AlexaStateToggle class="alexaStateToggle" />
+      </nav>
    </div>
 </template>
 
 <script>
-import axios from 'axios';
-import StateToggle from '@/components/StateToggle';
+import AlexaStateToggle from '@/components/AlexaStateToggle';
 
 export default {
    name: 'Header',
 
    components: {
-      StateToggle,
-   },
-
-   data: function () {
-      return {
-         serverState: 'unknown',
-      };
-   },
-
-   computed: {
-      isRunning() {
-         return this.serverState === 'running';
-      },
-   },
-
-   created() {
-      this.fetchState();
-   },
-
-   methods: {
-      fetchState() {
-         axios
-            .get('/api/alexa/state')
-            .then((response) => {
-               this.serverState = response.data.state;
-            })
-            .catch((err) => {
-               this.serverState = err;
-            });
-      },
-
-      toggleState(state) {
-         if (state === true) {
-            this.serverState = 'running';
-         } else {
-            this.serverState = 'stopped';
-         }
-
-         axios.post(`/api/alexa/state?set=${this.serverState}`).catch((err) => {
-            console.log(err.response.data.error || err);
-            this.fetchState();
-         });
-      },
+      AlexaStateToggle,
    },
 };
 </script>
@@ -68,13 +32,80 @@ export default {
 <style lang="scss" scoped>
 div {
    display: flex;
+   flex-wrap: wrap;
    align-items: center;
    justify-content: space-between;
    height: 100%;
+   width: 100%;
    font-family: $font-headline;
+
+   .menu {
+      &__label {
+         display: flex;
+         flex-direction: column;
+         justify-content: space-evenly;
+
+         margin-top: 0.5em;
+         width: 3em;
+         height: 3em;
+
+         @include breakpoint(min, tablet) {
+            display: none;
+         }
+
+         span {
+            margin: 0 10%;
+            width: 80%;
+            height: 15%;
+            background-color: $color-bg-light;
+            border-radius: $main-border-radius;
+
+            transition: all 0.2s linear;
+         }
+      }
+
+      &__checkbox {
+         display: none;
+      }
+
+      &__checkbox:checked ~ nav {
+         opacity: 1;
+         visibility: visible;
+      }
+
+      &__checkbox:checked ~ label > span {
+         &:nth-of-type(1) {
+            transform: translateY(0.9em) rotate(45deg);
+         }
+         &:nth-of-type(2) {
+            opacity: 0;
+         }
+         &:nth-of-type(3) {
+            transform: translateY(-0.9em) rotate(-45deg);
+         }
+      }
+   }
 
    nav {
       display: flex;
+      flex-direction: column;
+      width: 100%;
+      overflow: visible;
+      z-index: 99;
+
+      border-bottom: 1em solid $color-bg-dark;
+
+      opacity: 0;
+      visibility: hidden;
+      transition: visibility 1s linear, opacity 0.2s linear;
+
+      @include breakpoint(min, tablet) {
+         flex-direction: row;
+         border-bottom: none;
+         transition: none;
+         visibility: visible;
+         opacity: 1;
+      }
 
       a {
          padding: 0.5em 1em;
@@ -88,26 +119,26 @@ div {
             color: $color-fg-highlight;
          }
 
-         &:first-of-type {
-            border-top-left-radius: $main-border-radius;
-            border-bottom-left-radius: $main-border-radius;
-         }
+         @include breakpoint(min, tablet) {
+            &:first-of-type {
+               border-top-left-radius: $main-border-radius;
+               border-bottom-left-radius: $main-border-radius;
+            }
 
-         &:last-of-type {
-            border-top-right-radius: $main-border-radius;
-            border-bottom-right-radius: $main-border-radius;
+            &:last-of-type {
+               border-top-right-radius: $main-border-radius;
+               border-bottom-right-radius: $main-border-radius;
+            }
          }
       }
-   }
 
-   .service {
-      padding: 0.5em 1em;
-      background-color: $color-bg-light;
-      border-radius: $main-border-radius;
+      .alexaStateToggle {
+         padding-top: 2em;
 
-      .state {
-         margin-left: 1em;
-         padding-left: 1em;
+         @include breakpoint(min, tablet) {
+            padding-top: 0.5em;
+            margin-left: auto;
+         }
       }
    }
 }

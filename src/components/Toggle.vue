@@ -1,5 +1,5 @@
 <template>
-   <label class="switch">
+   <label class="toggle">
       <input v-bind="$attrs" type="checkbox" @change="$emit('change', $event.target.checked)" />
       <span class="slider" />
    </label>
@@ -7,13 +7,13 @@
 
 <script>
 export default {
-   name: 'StateToggle',
+   name: 'Toggle',
    inheritAttrs: false,
 };
 </script>
 
 <style lang="scss" scoped>
-.switch {
+.toggle {
    position: relative;
    display: inline-block;
    width: 2.4em;
